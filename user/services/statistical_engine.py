@@ -1,19 +1,27 @@
-from ..models import Test
+from ..models import TestRecord
 
 def statistical_probability(bacteria, antibiotic):
-
-    total = Test.objects.filter(
-        bacteria_name=bacteria,
-        antibiotic_name=antibiotic
+    total = TestRecord.objects.filter(
+        bacteria=bacteria,
+        antibiotic=antibiotic
     ).count()
 
     if total == 0:
-        return 0.5
+        return 0.5  # Neutral default
 
-    resistant = Test.objects.filter(
-        bacteria_name=bacteria,
-        antibiotic_name=antibiotic,
-        result="R"
+    # A record represents a resistant case if:
+    # 1. Prediction was "Resistant" and it WAS correct
+    # 2. Prediction was "Susceptible" and it was NOT correct
+    resistant_count = TestRecord.objects.filter(
+        bacteria=bacteria,
+        antibiotic=antibiotic,
+        prediction="Resistant",
+        is_correct=True
+    ).count() + TestRecord.objects.filter(
+        bacteria=bacteria,
+        antibiotic=antibiotic,
+        prediction="Susceptible",
+        is_correct=False
     ).count()
 
-    return resistant / total
+    return resistant_count / total

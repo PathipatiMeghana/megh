@@ -21,6 +21,7 @@ print("Total rows before cleaning:", len(df))
 
 # =========================
 # Rename columns if needed
+# (Adjust automatically if dataset uses different names)
 # =========================
 rename_map = {}
 
@@ -64,17 +65,16 @@ df["gender"] = df["gender"].map({
 })
 
 # =========================
-# FIXED: MULTI-CLASS (S, I, R)
+# Convert result to binary
 # =========================
 df["result"] = df["result"].astype(str).str.upper()
 
-# Keep only valid values
+# Keep only S, I, R
 df = df[df["result"].isin(["S", "I", "R"])]
 
-# Encode result
+# Encode result (3 classes)
 result_encoder = LabelEncoder()
 df["result_encoded"] = result_encoder.fit_transform(df["result"])
-
 # =========================
 # Encode bacteria
 # =========================
@@ -101,15 +101,13 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 # =========================
-# Train Model (IMPROVED)
+# Train Model
 # =========================
 model = RandomForestClassifier(
     n_estimators=200,
     class_weight="balanced",
     random_state=42
 )
-
-model.fit(X_train, y_train)
 
 # =========================
 # Evaluate
@@ -125,6 +123,5 @@ print(f"Model Accuracy: {accuracy * 100:.2f}%")
 joblib.dump(model, "resistance_model.pkl")
 joblib.dump(bacteria_encoder, "bacteria_encoder.pkl")
 joblib.dump(antibiotic_encoder, "antibiotic_encoder.pkl")
-joblib.dump(result_encoder, "result_encoder.pkl")  # IMPORTANT
-
+joblib.dump(result_encoder, "result_encoder.pkl")
 print("Model trained & saved successfully!")
