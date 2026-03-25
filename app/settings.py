@@ -6,7 +6,7 @@ SECRET_KEY = 'django-insecure-change-this-key'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '10.32.141.63', '10.193.19.63', '10.252.103.63', '10.235.253.63', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*',  '127.0.0.1']
 
 
 # ===============================
